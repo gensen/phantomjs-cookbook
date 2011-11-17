@@ -31,5 +31,5 @@ bash "Building phantomjs" do
     qmake-qt4 && make
     cp bin/phantomjs /usr/local/bin/
   }
-  not_if "[ $(xvfb-run phantomjs --version) == '#{node[:phantomjs][:version]}' ]"
+  not_if "[ $(xvfb-run phantomjs --version | grep -c '#{node[:phantomjs][:version]}') -gt 0 ]"
 end
