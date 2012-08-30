@@ -1,8 +1,8 @@
-maintainer        "Gerhard Lazu"
-maintainer_email  "gerhard@lazu.co.uk"
+maintainer        "General Sensing LTD"
+maintainer_email  "dev@generalsensing.com"
 license           "Apache 2.0"
-description       "Installs and phantomjs 1.3"
-version           "1.3"
+description       "Installs and phantomjs 1.6.1"
+version           "1.6.1"
 
 recipe "phantomjs", "Installs phantomjs from source"
 

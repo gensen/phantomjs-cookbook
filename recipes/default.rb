@@ -1,35 +1,20 @@
-apt_repository "kubuntu_backports" do
-  uri "http://ppa.launchpad.net/kubuntu-ppa/backports/ubuntu"
-  keyserver "keyserver.ubuntu.com"
-  key "8AC93F7A"
-  action :add
+%w{ build-essential git }.each do |cb|
+  include_recipe("#{cb}::default")
 end
 
-package "xvfb"
-package "x11vnc"
-package "libqt4-dev"
-package "libqtwebkit-dev"
-package "qt4-qmake"
-
-# Ensuring phantomjs is checked out
-#
-bash "Ensuring phantomjs is checked out" do
-  cwd "/usr/local/src"
-  code %{
-    git clone #{node[:phantomjs][:repository]}
-    cd phantomjs
-    git checkout #{node[:phantomjs][:version]}
-  }
-  not_if "[ -d /usr/local/src/phantomjs ]"
+%w{ libssl-dev libfontconfig1-dev }.each do |pkg|
+  package pkg
 end
 
-# Building phantomjs if missing from PATH
-#
-bash "Building phantomjs" do
-  cwd "/usr/local/src/phantomjs"
-  code %{
-    qmake-qt4 && make
-    cp bin/phantomjs /usr/local/bin/
-  }
-  not_if "[ $(xvfb-run phantomjs --version | grep -c '#{node[:phantomjs][:version]}') -gt 0 ]"
+deploy_revision "/usr/local/src/phantomjs" do
+  repository node[:phantomjs][:repository]
+  revision node[:phantomjs][:version]
+  before_migrate do
+    execute "build" do
+      command "./build.sh"
+      cwd release_path
+      action :run
+    end
+  end
 end
+
